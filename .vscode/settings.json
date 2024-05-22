@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.c": "c",
+        "bldc.h": "c",
+        "apt32f102_types_local.h": "c"
+    }
+}
