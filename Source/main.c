@@ -57,6 +57,7 @@ extern void APT32F102_init(void);
 /**************************************************/
 int main(void) 
 {
+  static U16_T timer = 0 ;
 	delay_nms(2000);							//power on delay if needed
 	APT32F102_init();							//102 initial
 
@@ -69,10 +70,28 @@ int main(void)
    while (1)
    {
      SYSCON_IWDCNT_Reload();
+      if(bldc.task_run == 1)
+      {
+        bldc.task_run = 0;
+        if(bldc.status == open)
+        {
+          timer++;
+          if (timer >2000)
+          {
+            timer = 0;
 
-     blcdStart();
-     adc_get();
-	 my_printf("nihao\n");
+            bldc.status = close;
+          }
+          blcdStart();
+        }
+        else
+        {
+
+        }
+        
+      }
+     
+     
   }
 }
 /******************* (C) COPYRIGHT 2019 APT Chip *****END OF FILE****/

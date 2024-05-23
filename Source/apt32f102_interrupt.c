@@ -860,6 +860,7 @@ void BT0IntHandler(void)
 	if((BT0->MISR&BT_PEND)==BT_PEND)				//BT0 PEND interrupt
 	{
 		BT0->ICR = BT_PEND;
+		
 		adc_get();
 	} 
 	else if((BT0->MISR&BT_CMP)==BT_CMP)				//BT0 CMP Match interrupt 
@@ -886,6 +887,8 @@ void BT1IntHandler(void)
 	if((BT1->MISR&BT_PEND)==BT_PEND)				//BT1 PEND interrupt
 	{
 		BT1->ICR = BT_PEND;
+		bldc.task_run = 1;
+		
 	} 
 	else if((BT0->MISR&BT_CMP)==BT_CMP)				//BT1 CMP Match interrupt 
 	{

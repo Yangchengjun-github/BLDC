@@ -1,8 +1,10 @@
 #include "bldc.h"
+#include "string.h"
+
 
 xbldc_t bldc;
 
-UINT16 center = 30;
+
 U16_T adc_value[3];
 void blcdStart(void);
 void stepMoter(void);
@@ -22,7 +24,7 @@ void ADC_CONFIG(void)
     ADC12_Software_Reset();
     ADC12_CLK_CMD(ADC_CLK_CR, ENABLE);                                                  // enable ADC CLK
     ADC12_Configure_Mode(ADC12_12BIT, Continuous_mode, 0, 6, 2, 3);                     // 12BIT ADC; Continuous mode; Conversion priority selection 0; Holding cycles=6 ;ADC_CLK=PCLK/2*2=0.2us; Number of Conversions=1
-    ADC12_Configure_VREF_Selecte(ADC12_VREFP_FVR2048_VREFN_VSS);                        // ADC VREF Positive FVR4.096V,negative VSS
+    ADC12_Configure_VREF_Selecte(ADC12_VREFP_VDD_VREFN_VSS);                        // ADC VREF Positive FVR4.096V,negative VSS
     ADC12_ConversionChannel_Config(CH_A, ADC12_CV_RepeatNum1, ADC12_AVGDIS, 0); // SEQ0 chose ADCIN0, 6 Holding cycles, Average 1 time
     ADC12_ConversionChannel_Config(CH_B, ADC12_CV_RepeatNum1, ADC12_AVGDIS, 1); // SEQ1 chose ADCIN1, 6 Holding cycles , Average 1 time
     ADC12_ConversionChannel_Config(CH_C, ADC12_CV_RepeatNum1, ADC12_AVGDIS, 2); // SEQ1 chose ADCIN1, 6 Holding cycles , Average 1 time
@@ -38,18 +40,88 @@ void ADC_CONFIG(void)
 }
 void adc_get(void)
 {
+    if(bldc.delay30 == _ING)
+    {
+        if(bldc.wait++ > 1)
+        {
+            bldc.delay30 = _OK;
+        }
+
+    }
+        
     ADC12_SEQEND_wait(0);
     adc_value[0] = ADC0->DR[0];
     ADC12_SEQEND_wait(1);
     adc_value[1] = ADC0->DR[1];
     ADC12_SEQEND_wait(2);
     adc_value[2] = ADC0->DR[2];
-    //printf("%d,%d,%d\n", adc_value[0], adc_value[1], adc_value[2]);
-	my_printf("nihao\n");
+    
+    if(bldc.status == open)
+    {
+        return;
+    }
+   
+        switch (bldc.step)
+        {
+        case 0: // AB
+            if (adc_value[2] < bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 1: // AC
+            if (adc_value[1] > bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 2: // BC
+            if (adc_value[0] < bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 3: // BA
+            if (adc_value[2] > bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 4: // CA
+            if (adc_value[1] < bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 5: // CB
+            if (adc_value[0] > bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        }
+    
+   
+    if (bldc.zero == 1  && bldc.delay30 == _OK)
+    {
+        bldc.zero = 0;
+        if (++bldc.step >= 6 )
+        {
+            bldc.step = 0;
+        }
+
+        stepMoter();
+        bldc.wait = 0;
+        bldc.delay30 = _ING;
+    }
+    printf("%d,%d,%d,%d,%d\n", adc_value[0], adc_value[1], adc_value[2], bldc.wait, bldc.step);
 }
 
 void bldcInit(void)
 {
+    bldc.status = open;
+    bldc.delay30 = _OK;
+    bldc.zero_base = 1638;//1638 ;//12V
     GPIO_Init(GAL_PORT, GAL_PIN, 0);
     GPIO_Init(GBL_PORT, GBL_PIN, 0);
     GPIO_Init(GCL_PORT, GCL_PIN, 0);
@@ -60,19 +132,24 @@ void bldcInit(void)
 
 void blcdStart(void)
 {
-    static U8_T i = 0;
-    static U8_T j;
-    stepMoter()  ;
-    delay_nms(50); //delay 100ms
+    static U16_T timer;
+    if(timer++ > 1)
+    {
+        timer = 0;
+        if (++bldc.step >= 6)
+        {
+            bldc.step = 0;
+        }
+
+        stepMoter();
+    }
+     
 }
 
 
 void stepMoter(void)
 {
-    if(++bldc.step >= 6)
-    {
-        bldc.step = 0;
-    }
+    
     switch (bldc.step)
     {
     case 0: //AB
@@ -155,4 +232,84 @@ void stepMoter(void)
     }
 }
 
+void stepMoter1(void)
+{
+    
+    switch (bldc.step)
+    {
+    case 0: // AB
+        GAL_LOW;
+        GBL_LOW;
+        GCL_LOW;
 
+        GAB_LOW;
+        GCB_LOW;
+        bldc_delay();
+        //        ADC12_Compare_statue(NBRCMP0_TypeDef, NBRCMPX_L_TypeDef);
+        //        ADC12_CompareFunction_set(CH_A , CH_A , center , center ) ;
+
+        GAL_HIGH;
+        GBB_HIGH;
+        break;
+    case 1: // AC
+        GAL_HIGH;
+        GBL_LOW;
+        GCL_LOW;
+
+        GAB_LOW;
+        GBB_LOW;
+        bldc_delay();
+
+        GCB_HIGH;
+        break;
+    case 2: // BC
+        GAL_LOW;
+        GBL_LOW;
+        GCL_LOW;
+
+        GAB_LOW;
+        GBB_LOW;
+
+        bldc_delay();
+        GBL_HIGH;
+        GCB_HIGH;
+        break;
+    case 3: // BA
+        GBL_HIGH;
+        GAL_LOW;
+        GCL_LOW;
+
+        GBB_LOW;
+        GCB_LOW;
+        bldc_delay();
+
+        GAB_HIGH;
+        break;
+
+    case 4: // CA
+        GAL_LOW;
+        GBL_LOW;
+        GCL_LOW;
+
+        GBB_LOW;
+        GCB_LOW;
+        bldc_delay();
+
+        GCL_HIGH;
+        GAB_HIGH;
+        break;
+    case 5: // CB
+        GCL_HIGH;
+        GAL_LOW;
+        GBL_LOW;
+        GAB_LOW;
+        GCB_LOW;
+        bldc_delay();
+
+        GBB_HIGH;
+        break;
+
+    default:
+        break;
+    }
+}

@@ -204,26 +204,26 @@ void GPT0_CONFIG(void)
 /*************************************************************/	
 void BT_CONFIG(void)
 {
-	BT_DeInit(BT0);
-	BT_IO_Init(BT0_PA15);
+	BT_DeInit(BT0); //过零检测
+	// BT_IO_Init(BT0_PA15);
 	BT_Configure(BT0,BTCLK_EN,47,BT_IMMEDIATE,BT_CONTINUOUS,BT_PCLKDIV);//TCLK=PCLK/(0+1)
 	BT_ControlSet_Configure(BT0,BT_START_HIGH,BT_IDLE_LOW,BT_SYNC_DIS,BT_SYNCMD_DIS,BT_OSTMDX_ONCE,BT_AREARM_DIS,BT_CNTRLD_EN);
 	//BT_ControlSet_Configure(BT0,BT_START_HIGH,BT_IDLE_LOW,BT_SYNC_EN,BT_SYNCMD_DIS,BT_OSTMDX_ONCE,BT_AREARM_DIS,BT_CNTRLD_EN);
 	//BT_Trigger_Configure(BT0,BT_TRGSRC_PEND,BT_TRGOE_EN);
-	BT_Period_CMP_Write(BT0,2000,1000);
+	BT_Period_CMP_Write(BT0,500,500);
 	BT_Start(BT0);
 	BT_ConfigInterrupt_CMD(BT0,ENABLE,BT_PEND);
 	BT0_INT_ENABLE();
-	
-	/*BT_DeInit(BT1);
-	BT_IO_Init(BT1_PA08);
-	BT_Configure(BT1,BTCLK_EN,0,BT_IMMEDIATE,BT_CONTINUOUS,BT_PCLKDIV);
-	BT_ControlSet_Configure(BT1,BT_START_LOW,BT_IDLE_HIGH,BT_SYNC_DIS,BT_SYNCMD_DIS,BT_OSTMDX_ONCE,BT_AREARM_DIS,BT_CNTRLD_EN);
-	BT_Trigger_Configure(BT1,BT_TRGSRC_PEND,BT_TRGOE_EN);
+
+	BT_DeInit(BT1); // 任务调用
+	// BT_IO_Init(BT1_PA08);
+	BT_Configure(BT1,BTCLK_EN,47,BT_IMMEDIATE,BT_CONTINUOUS,BT_PCLKDIV);
+	// BT_ControlSet_Configure(BT1,BT_START_LOW,BT_IDLE_HIGH,BT_SYNC_DIS,BT_SYNCMD_DIS,BT_OSTMDX_ONCE,BT_AREARM_DIS,BT_CNTRLD_EN);
+	// BT_Trigger_Configure(BT1,BT_TRGSRC_PEND,BT_TRGOE_EN);
 	BT_Period_CMP_Write(BT1,1000,500);
 	BT_Start(BT1);
 	BT_ConfigInterrupt_CMD(BT1,ENABLE,BT_PEND);
-	BT1_INT_ENABLE();*/
+	BT1_INT_ENABLE();
 }
 /*************************************************************/
 //COUNTA Initial
@@ -405,7 +405,7 @@ void UART0_CONFIG(void)
 {
 	UART0_DeInit();                                               //clear all UART Register
     UART_IO_Init(IO_UART0,1);                                     //use PA0.1->RXD0, PA0.0->TXD0
-	UARTInit(UART0,416,UART_PAR_NONE);							  //baudrate=sysclock 48M/416=115200
+	UARTInit(UART0,48,UART_PAR_NONE);							  //baudrate=sysclock 48M/416=115200
     //UARTInitRxTxIntEn(UART0,416,UART_PAR_NONE);				  //baudrate=sysclock 48M/416=115200,tx rx int enabled 
 	//UART0_Int_Enable();
 }	
@@ -534,7 +534,7 @@ void APT32F102_init(void)
 	//GPIO_CONFIG();                                                //GPIO initial     
 	//EPT0_CONFIG();                                                //EPT0 initial 
 	//GPT0_CONFIG();												//GPT0 initial	
-	//BT_CONFIG();													//BT initial
+	BT_CONFIG();													//BT initial
 	//COUNTA_CONFIG();                                              //CountA initial	
 	//RTC_CONFIG();													//RCT initial		              
 	//ET_CONFIG();													//ETCB initial

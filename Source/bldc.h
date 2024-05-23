@@ -7,6 +7,22 @@
 typedef struct 
 {
     U8_T step;
+    U8_T task_run;
+    U16_T zero_base;
+    U8_T zero;
+    U16_T wait;
+    enum
+    {
+        open,
+        close,
+    }status;
+    enum
+    {
+        _NO,
+        _ING,
+        _OK,
+
+    }delay30;
 }xbldc_t;
 
 #define GAL_PORT GPIOA0
@@ -56,6 +72,8 @@ void stepMoter(void);
 void ADC_CONFIG(void);
 
 void adc_get(void);
+
+extern xbldc_t bldc;
 
 #endif
 
