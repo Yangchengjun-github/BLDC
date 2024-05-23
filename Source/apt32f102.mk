@@ -5,14 +5,14 @@
 ## BuildSet
 ProjectName            :=apt32f102
 ConfigurationName      :=BuildSet
-WorkspacePath          :=../Workspace/APT32F102x_StdPeriph_Lib/
+WorkspacePath          :=./
 ProjectPath            :=./
 IntermediateDirectory  :=Obj
 OutDir                 :=$(IntermediateDirectory)
-User                   :=clutc
-Date                   :=14/09/2023
-CDKPath                :=F:/C-Sky
-ToolchainPath          :=F:/CDKRepo/Toolchain/CKV2ElfMinilib/V3.10.29/R/
+User                   :=Yang
+Date                   :=5/23/2024
+CDKPath                :=../../../../../../../CDK
+ToolchainPath          :=C:/CDKRepo/Toolchain/CKV2ElfMinilib/V3.10.29/R/
 LinkerName             :=csky-elfabiv2-gcc
 LinkerNameoption       :=
 SIZE                   :=csky-elfabiv2-size
@@ -43,14 +43,13 @@ OutputFile             :=Release_APT32F102
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
-PreprocessOnlyDisableLineSwitch   :=-P
 ObjectsFileList        :=apt32f102.txt
 MakeDirCommand         :=mkdir
-LinkOptions            := -mcpu=ck801    -nostartfiles -Wl,--gc-sections -T"$(ProjectPath)/ckcpu.ld"
-LinkOtherFlagsOption   := -Wl,--ckmap=$(ProjectPath)/Lst/$(OutputFile).map 
+LinkOptions            := -mcpu=ck801  -nostartfiles -Wl,--gc-sections -T"$(ProjectPath)/ckcpu.ld"
+LinkOtherFlagsOption   := 
 IncludePackagePath     :=
-IncludeCPath           := $(IncludeSwitch)F:/C-Sky/CSKY/csi/csi_core/csi_cdk/ $(IncludeSwitch)F:/C-Sky/CSKY/csi/csi_core/include/ $(IncludeSwitch)F:/C-Sky/CSKY/csi/csi_driver/include/ $(IncludeSwitch). $(IncludeSwitch)include  
-IncludeAPath           := $(IncludeSwitch)F:/C-Sky/CSKY/csi/csi_core/csi_cdk/ $(IncludeSwitch)F:/C-Sky/CSKY/csi/csi_core/include/ $(IncludeSwitch)F:/C-Sky/CSKY/csi/csi_driver/include/ $(IncludeSwitch).  
+IncludeCPath           := $(IncludeSwitch)../../../../../../../CDK/CSKY/csi/csi_core/csi_cdk/ $(IncludeSwitch)../../../../../../../CDK/CSKY/csi/csi_core/include/ $(IncludeSwitch)../../../../../../../CDK/CSKY/csi/csi_driver/include/ $(IncludeSwitch). $(IncludeSwitch)include  
+IncludeAPath           := $(IncludeSwitch)../../../../../../../CDK/CSKY/csi/csi_core/csi_cdk/ $(IncludeSwitch)../../../../../../../CDK/CSKY/csi/csi_core/include/ $(IncludeSwitch)../../../../../../../CDK/CSKY/csi/csi_driver/include/ $(IncludeSwitch).  
 Libs                   := -Wl,--start-group  -Wl,--end-group $(LibrarySwitch)_102TKey_1_17 $(LibrarySwitch)_102ClkCalib_1_04 $(LibrarySwitch)m  
 ArLibs                 := "lib_102TKey_1_17" "lib_102ClkCalib_1_04" "libm" 
 PackagesLibPath        :=
@@ -68,13 +67,12 @@ OBJDUMP  :=csky-elfabiv2-objdump
 OBJCOPY  :=csky-elfabiv2-objcopy
 CXXFLAGS := -mcpu=ck801   $(PreprocessorSwitch)CONFIG_CSKY_MMU=0   $(UnPreprocessorSwitch)__CSKY_ABIV2__  -Os  -g  -ffunction-sections -mistack 
 CFLAGS   := -mcpu=ck801   $(PreprocessorSwitch)CONFIG_CSKY_MMU=0   $(UnPreprocessorSwitch)__CSKY_ABIV2__  -Os  -g  -ffunction-sections -mistack 
-ASFLAGS  := -mcpu=ck801   $(PreprocessorSwitch)CONFIG_CKCPU_MMU=0   $(UnPreprocessorSwitch)__CSKY_ABIV2__   -Wa,-gdwarf-2    
-PreprocessFlags  := -mcpu=ck801   $(PreprocessorSwitch)CONFIG_CSKY_MMU=0   $(UnPreprocessorSwitch)__CSKY_ABIV2__  -Os  -g  -ffunction-sections -mistack 
+ASFLAGS  := -mcpu=ck801   $(PreprocessorSwitch)CONFIG_CKCPU_MMU=0   $(UnPreprocessorSwitch)__CSKY_ABIV2__  -Wa,--gdwarf2    
 
 
 Objects0=$(IntermediateDirectory)/arch_crt0$(ObjectSuffix) $(IntermediateDirectory)/arch_mem_init$(ObjectSuffix) $(IntermediateDirectory)/arch_apt32f102_iostring$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_syscon$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_gpio$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_lpt$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_crc$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_wwdt$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_countera$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_et$(ObjectSuffix) \
 	$(IntermediateDirectory)/FWlib_apt32f102_bt$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_gpt$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_sio$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_spi$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_uart$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_i2c$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_ept$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_rtc$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_adc$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_ifc$(ObjectSuffix) \
-	$(IntermediateDirectory)/FWlib_apt32f102_tkey_parameter$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_coret$(ObjectSuffix) $(IntermediateDirectory)/apt32f102_initial$(ObjectSuffix) $(IntermediateDirectory)/apt32f102_interrupt$(ObjectSuffix) $(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/drivers_apt32f102$(ObjectSuffix) $(IntermediateDirectory)/drivers_apt32f102_ck801$(ObjectSuffix) $(IntermediateDirectory)/__rt_entry$(ObjectSuffix) 
+	$(IntermediateDirectory)/FWlib_apt32f102_tkey_parameter$(ObjectSuffix) $(IntermediateDirectory)/FWlib_apt32f102_coret$(ObjectSuffix) $(IntermediateDirectory)/apt32f102_initial$(ObjectSuffix) $(IntermediateDirectory)/apt32f102_interrupt$(ObjectSuffix) $(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/bldc$(ObjectSuffix) $(IntermediateDirectory)/drivers_apt32f102$(ObjectSuffix) $(IntermediateDirectory)/drivers_apt32f102_ck801$(ObjectSuffix) $(IntermediateDirectory)/__rt_entry$(ObjectSuffix) 
 
 
 
@@ -95,7 +93,7 @@ $(IntermediateDirectory)/$(OutputFile):  $(Objects) Always_Link
 	@$(SIZE) $(ProjectPath)$(IntermediateDirectory)/$(OutputFile)$(ExeSuffix) 
 	@echo -n checksum value of target:  
 	@$(CHECKSUM) $(ProjectPath)/$(IntermediateDirectory)/$(OutputFile)$(ExeSuffix) 
-	@apt32f102.modify.bat $(IntermediateDirectory) $(OutputFile)$(ExeSuffix) 
+	@$(ProjectName).modify.bat $(IntermediateDirectory) $(OutputFile)$(ExeSuffix) 
 
 Always_Link:
 
@@ -227,6 +225,11 @@ $(IntermediateDirectory)/main$(ObjectSuffix): main.c
 	$(CC) $(SourceSwitch) main.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/main$(ObjectSuffix) -MF$(IntermediateDirectory)/main$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/main$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
 Lst/main$(PreprocessSuffix): main.c
 	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/main$(PreprocessSuffix) main.c
+
+$(IntermediateDirectory)/bldc$(ObjectSuffix): bldc.c  
+	$(CC) $(SourceSwitch) bldc.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/bldc$(ObjectSuffix) -MF$(IntermediateDirectory)/bldc$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/bldc$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
+Lst/bldc$(PreprocessSuffix): bldc.c
+	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/bldc$(PreprocessSuffix) bldc.c
 
 $(IntermediateDirectory)/drivers_apt32f102$(ObjectSuffix): drivers/apt32f102.c  
 	$(CC) $(SourceSwitch) drivers/apt32f102.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/drivers_apt32f102$(ObjectSuffix) -MF$(IntermediateDirectory)/drivers_apt32f102$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/drivers_apt32f102$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)

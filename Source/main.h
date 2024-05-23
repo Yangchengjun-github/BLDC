@@ -22,5 +22,6 @@
 #include "apt32f102_wwdt.h"
 #include "apt32f102_types_local.h"
 #include "apt32f102_tkey.h"
+#include <stdio.h>
 
 #endif

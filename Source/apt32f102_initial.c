@@ -404,7 +404,7 @@ void I2C_SLAVE_CONFIG(void)
 void UART0_CONFIG(void)
 {
 	UART0_DeInit();                                               //clear all UART Register
-    UART_IO_Init(IO_UART0,0);                                     //use PA0.1->RXD0, PA0.0->TXD0
+    UART_IO_Init(IO_UART0,1);                                     //use PA0.1->RXD0, PA0.0->TXD0
 	UARTInit(UART0,416,UART_PAR_NONE);							  //baudrate=sysclock 48M/416=115200
     //UARTInitRxTxIntEn(UART0,416,UART_PAR_NONE);				  //baudrate=sysclock 48M/416=115200,tx rx int enabled 
 	//UART0_Int_Enable();
@@ -439,8 +439,8 @@ void UART2_CONFIG(void)
 //adc config
 //EntryParameter:NONE
 //ReturnValue:NONE
-/*************************************************************/	
-void ADC12_CONFIG(void)
+/*************************************************************/
+void ADC12_CONFIG(void) 
 {
 	ADC12_Software_Reset();
 	ADC12_CLK_CMD(ADC_CLK_CR , ENABLE);                                         //enable ADC CLK
@@ -543,7 +543,7 @@ void APT32F102_init(void)
 	//SPI_MASTER_CONFIG();											//SPI Master initial 	
 	//SPI_SLAVE_CONFIG();											//SPI Slaver initial 
 	//SIO_CONFIG();													//SIO initial
-    //UART0_CONFIG();                                               //UART0 initial 
+    UART0_CONFIG();                                               //UART0 initial 
 	//UART1_CONFIG();                                               //UART1 initial 
 	//UART2_CONFIG();                                               //UART2 initial 
 	//ADC12_CONFIG();                                               //ADC initial 

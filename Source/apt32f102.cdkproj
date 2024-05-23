@@ -162,6 +162,9 @@
     <File Name="main.c">
       <FileOption/>
     </File>
+    <File Name="bldc.c">
+      <FileOption/>
+    </File>
   </VirtualDirectory>
   <VirtualDirectory Name="drivers">
     <File Name="drivers/apt32f102.c">
@@ -409,11 +412,12 @@
     <watchExpressions>CK801:1;i_temp:1;j_temp:1;k_temp:1;GPIOB0:1;GPIOA0:1;SYSCON:1;test_d:1;LPT:1;BT0:1;Key_Map:1;DFLASH_rdata:1;TKEYBUF:1;test:1;RDFLASHDATA:1;WRFLASHDATA:1</watchExpressions>
     <memoryExpressions>0x10000000;;;</memoryExpressions>
     <statistics>;;32;;MHZ;;up</statistics>
-    <peripheralTabs/>
+    <peripheralTabs>
+      <Tab disFormat="Hex">UART0</Tab>
+    </peripheralTabs>
     <WatchDisplayFormat>1</WatchDisplayFormat>
     <LocalDisplayFormat>0</LocalDisplayFormat>
     <debugLayout>layout2|name=Project View;caption=Project View;state=31459324;dir=4;layer=1;row=0;pos=0;prop=68571;bestw=456;besth=277;minw=10;minh=5;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=14682108;dir=3;layer=1;row=0;pos=0;prop=86169;bestw=341;besth=315;minw=10;minh=5;maxw=-1;maxh=-1;floatx=60;floaty=707;floatw=418;floath=340|name=Frame Info;caption=Frame Info;state=14698492;dir=3;layer=1;row=0;pos=1;prop=106705;bestw=400;besth=300;minw=10;minh=5;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Peripherals;caption=Peripherals;state=31459326;dir=3;layer=1;row=0;pos=4;prop=100000;bestw=11;besth=43;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Serial Pane;caption=Serial Pane;state=14682110;dir=3;layer=1;row=0;pos=4;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=256;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Output View;caption=Output View;state=31459326;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=958;besth=244;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Disassemble;caption=Disassemble;state=2099198;dir=3;layer=1;row=0;pos=2;prop=158373;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=1746;floaty=812;floatw=216;floath=236|name=Register;caption=Register;state=2099198;dir=4;layer=1;row=0;pos=1;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=83;floaty=444;floatw=218;floath=240|name=Outline;caption=Outline;state=2099198;dir=2;layer=0;row=2;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=1823;floaty=285;floatw=216;floath=236|dock_size(4,1,0)=210|dock_size(5,0,0)=20|dock_size(3,1,0)=335|</debugLayout>
     <memoryTabColSizeExpressions>100:4;100:8;100:8;100:8;</memoryTabColSizeExpressions>
-    <QuickWatchDisplayFormat>1</QuickWatchDisplayFormat>
   </DebugSessions>
 </Project>

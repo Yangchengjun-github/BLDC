@@ -39,6 +39,8 @@
 #include "apt32f102_types_local.h"
 #include "apt32f102_tkey.h"
 #include "bldc.h"
+
+extern void my_printf(const char *fmt, ...);
 /****************************************************
 //define
 *****************************************************/
@@ -55,13 +57,22 @@ extern void APT32F102_init(void);
 /**************************************************/
 int main(void) 
 {
-	delay_nms(1000);							//power on delay if needed
+	delay_nms(2000);							//power on delay if needed
 	APT32F102_init();							//102 initial
 
-    while(1)
-	{
-		SYSCON_IWDCNT_Reload(); 
-		blcdStart();
-	}
+  
+ 
+  
+   
+   ADC_CONFIG();
+   bldcInit();
+   while (1)
+   {
+     SYSCON_IWDCNT_Reload();
+
+     blcdStart();
+     adc_get();
+	 my_printf("nihao\n");
+  }
 }
 /******************* (C) COPYRIGHT 2019 APT Chip *****END OF FILE****/

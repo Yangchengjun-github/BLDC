@@ -24,7 +24,9 @@
 #include "stdio.h"
 #define LDCC_DATA_P 		0xe001105c /* LDCC Register. */
 #define LDCC_BIT_STATUS 	0x80000000 /* LDCC Status bit. */
-//#define _debug_uart_io
+
+
+#define _debug_uart_io
 /******************************************************************************
 * Main code
 ******************************************************************************/
@@ -32,7 +34,7 @@ void __putchar__ (char ch)
 {
 #ifdef _debug_uart_io
 	//UARTTxByte(UART0,s);			//uart 0
-	UARTTxByte(UART1,s);			//uart 1
+	UARTTxByte(UART0,ch);			//uart 1
 #else
 	//select debug serial Pane
 	volatile unsigned int *pdata = (unsigned int *)LDCC_DATA_P;

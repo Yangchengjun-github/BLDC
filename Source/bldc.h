@@ -45,8 +45,17 @@ typedef struct
 #define GCB_HIGH GPIO_Set_Value(GCB_PORT, GCB_PIN, 1)
 #define GCB_LOW GPIO_Set_Value(GCB_PORT, GCB_PIN, 0)
 
+
+#define CH_A ADC12_ADCIN1
+#define CH_B ADC12_ADCIN2
+#define CH_C ADC12_ADCIN3
+
 void blcdStart(void);
+void bldcInit(void);
 void stepMoter(void);
+void ADC_CONFIG(void);
+
+void adc_get(void);
 
 #endif
 

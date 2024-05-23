@@ -38,6 +38,9 @@
 #include "apt32f102_uart.h"
 #include "apt32f102_wwdt.h"
 #include "apt32f102_types_local.h"
+
+
+#include "bldc.h"
 /****************************************************
 //define
 *****************************************************/
@@ -203,18 +206,22 @@ void ADCIntHandler(void)
 	else if((ADC0->SR&ADC12_CMP0H)==ADC12_CMP0H)	//ADC CMP0H interrupt
 	{
 		ADC0->CSR = ADC12_CMP0H;
+		printf("+\n");
 	}
 	else if((ADC0->SR&ADC12_CMP0L)==ADC12_CMP0L)	//ADC CMP0L interrupt.
 	{
 		ADC0->CSR = ADC12_CMP0L;
+		printf("-\n");
 	}
 	else if((ADC0->SR&ADC12_CMP1H)==ADC12_CMP1H)	//ADC CMP1H interrupt.
 	{
 		ADC0->CSR = ADC12_CMP1H;
+		printf("+\n");
 	}
 	else if((ADC0->SR&ADC12_CMP1L)==ADC12_CMP1L)	//ADC CMP1L interrupt.
 	{
 		ADC0->CSR = ADC12_CMP1L;
+		printf("-\n");
 	}
 	else if((ADC0->SR&ADC12_SEQ_END0)==ADC12_SEQ_END0) //ADC SEQ0 interrupt,SEQ1~SEQ15 replace the parameter with ADC12_SEQ_END1~ADC12_SEQ_END15
 	{
@@ -853,6 +860,7 @@ void BT0IntHandler(void)
 	if((BT0->MISR&BT_PEND)==BT_PEND)				//BT0 PEND interrupt
 	{
 		BT0->ICR = BT_PEND;
+		adc_get();
 	} 
 	else if((BT0->MISR&BT_CMP)==BT_CMP)				//BT0 CMP Match interrupt 
 	{
