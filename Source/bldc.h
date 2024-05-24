@@ -8,9 +8,14 @@ typedef struct
 {
     U8_T step;
     U8_T task_run;
+    U8_T motor_run;
     U16_T zero_base;
     U8_T zero;
-    U16_T wait;
+    U16_T timer_xiao;
+    U16_T timer_stuff;
+    U16_T timer_phase_buff[8];
+    U16_T timer_phase;
+    U16_T timer_delay;
     enum
     {
         open,
@@ -22,7 +27,7 @@ typedef struct
         _ING,
         _OK,
 
-    }delay30;
+    }xiao,delay;
 }xbldc_t;
 
 #define GAL_PORT GPIOA0

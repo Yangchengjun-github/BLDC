@@ -6,6 +6,7 @@ xbldc_t bldc;
 
 
 U16_T adc_value[3];
+U16_T last_adc_value[3];
 void blcdStart(void);
 void stepMoter(void);
 void __putchar__ (char ch) ;
@@ -40,91 +41,150 @@ void ADC_CONFIG(void)
 }
 void adc_get(void)
 {
-    if(bldc.delay30 == _ING)
-    {
-        if(bldc.wait++ > 1)
-        {
-            bldc.delay30 = _OK;
-        }
+    static U8_T i = 0, j = 0;
 
-    }
-        
+
     ADC12_SEQEND_wait(0);
     adc_value[0] = ADC0->DR[0];
     ADC12_SEQEND_wait(1);
     adc_value[1] = ADC0->DR[1];
     ADC12_SEQEND_wait(2);
     adc_value[2] = ADC0->DR[2];
-    
-    if(bldc.status == open)
+
+
+    // if(bldc.xiao == _ING)
+    // {
+    //     if(bldc.timer_xiao)
+    //     {
+    //         bldc.timer_xiao--;
+    //     }
+    //     else
+    //     {
+    //         bldc.xiao = _OK;
+    //     }
+
+    // }
+    if(bldc.delay == _ING) 
     {
-        return;
-    }
-   
-        switch (bldc.step)
+        if(bldc.timer_delay)
         {
-        case 0: // AB
-            if (adc_value[2] < bldc.zero_base)
-            {
-                bldc.zero = 1;
-            }
-            break;
-        case 1: // AC
-            if (adc_value[1] > bldc.zero_base)
-            {
-                bldc.zero = 1;
-            }
-            break;
-        case 2: // BC
-            if (adc_value[0] < bldc.zero_base)
-            {
-                bldc.zero = 1;
-            }
-            break;
-        case 3: // BA
-            if (adc_value[2] > bldc.zero_base)
-            {
-                bldc.zero = 1;
-            }
-            break;
-        case 4: // CA
-            if (adc_value[1] < bldc.zero_base)
-            {
-                bldc.zero = 1;
-            }
-            break;
-        case 5: // CB
-            if (adc_value[0] > bldc.zero_base)
-            {
-                bldc.zero = 1;
-            }
-            break;
+            bldc.timer_delay--;
         }
-    
-   
-    if (bldc.zero == 1  && bldc.delay30 == _OK)
-    {
-        bldc.zero = 0;
-        if (++bldc.step >= 6 )
+        else
         {
-            bldc.step = 0;
+            bldc.delay = _OK;
+        }
+    }
+
+    if (bldc.delay == _OK)
+    {
+        if (bldc.status == close)
+        {
+            if (++bldc.step >= 6)
+            {
+                bldc.step = 0;
+            }
+            stepMoter();
+            bldc.xiao = _NO;
+            bldc.delay = _NO;
         }
 
-        stepMoter();
-        bldc.wait = 0;
-        bldc.delay30 = _ING;
+       
     }
-    printf("%d,%d,%d,%d,%d\n", adc_value[0], adc_value[1], adc_value[2], bldc.wait, bldc.step);
+
+    switch (bldc.step)
+    {
+    case 0: // AB
+        if (adc_value[2] < bldc.zero_base)//&& last_adc_value[2] > bldc.zero_base)
+        {
+            bldc.zero = 1;
+        }
+        break;
+    case 1: // AC
+        if (adc_value[1] > bldc.zero_base)//&& last_adc_value[1] < bldc.zero_base)
+        {
+            bldc.zero = 1;
+        }
+        break;
+    case 2: // BC
+        if (adc_value[0] < bldc.zero_base)//&& last_adc_value[0] > bldc.zero_base)
+        {
+            bldc.zero = 1;
+        }
+
+        break;
+    case 3: // BA
+        if (adc_value[2] > bldc.zero_base)//&& last_adc_value[2] < bldc.zero_base)
+        {
+            bldc.zero = 1;
+        }
+        break;
+    case 4: // CA
+        if (adc_value[1] < bldc.zero_base)//&& last_adc_value[1] > bldc.zero_base)
+        {
+            bldc.zero = 1;
+        }
+
+        break;
+    case 5: // CB
+        if (adc_value[0] > bldc.zero_base)//&& last_adc_value[0] < bldc.zero_base)
+        {
+            bldc.zero = 1;
+        }
+        break;
+    }
+
+    if (bldc.delay == _NO)
+    {
+        bldc.zero = 0;
+    }
+
+    if (bldc.zero == 1 )
+    {
+        bldc.zero = 0;
+
+        bldc.timer_phase_buff[j] = bldc.timer_phase;
+
+        if (++j >= 8)
+        {
+            j = 0;
+        }
+        for (bldc.timer_phase = 0, i = 0; i < 8; i++)
+        {
+            bldc.timer_phase += bldc.timer_phase_buff[i];
+        }
+        bldc.timer_phase = bldc.timer_phase >> 4;
+
+        bldc.timer_xiao = 0;
+        printf("%d\n", bldc.timer_phase);
+        bldc.timer_delay = bldc.timer_phase;
+        bldc.delay = _ING;
+        bldc.timer_stuff = 1000;
+        bldc.timer_phase = 0;
+        bldc.xiao = _ING;
+    }
+    
+
+   
+    
+    
+
+
+
+   // printf("%d,%d,%d,%d,%d,%d,%d\n", adc_value[0], adc_value[1], adc_value[2], bldc.wait, bldc.step, bldc.timer_stuff, bldc.timer_phase);
+    last_adc_value[0] = adc_value[0];
+    last_adc_value[1] = adc_value[1];
+    last_adc_value[2] = adc_value[2];
 }
 
 void bldcInit(void)
 {
     bldc.status = open;
-    bldc.delay30 = _OK;
-    bldc.zero_base = 1638;//1638 ;//12V
-    GPIO_Init(GAL_PORT, GAL_PIN, 0);
-    GPIO_Init(GBL_PORT, GBL_PIN, 0);
-    GPIO_Init(GCL_PORT, GCL_PIN, 0);
+    bldc.xiao = _OK;
+    bldc.zero_base = 800;//1638 ;//12V
+    // GPIO_Init(GAL_PORT, GAL_PIN, 0);
+    // GPIO_Init(GBL_PORT, GBL_PIN, 0);
+    // GPIO_Init(GCL_PORT, GCL_PIN, 0);
     GPIO_Init(GAB_PORT, GAB_PIN, 0);
     GPIO_Init(GBB_PORT, GBB_PIN, 0);
     GPIO_Init(GCB_PORT, GCB_PIN, 0);
@@ -140,36 +200,38 @@ void blcdStart(void)
         {
             bldc.step = 0;
         }
-
+        bldc.timer_stuff = 1000;
         stepMoter();
     }
      
 }
 
-
+#define DUTY ( 4800*0.8)
 void stepMoter(void)
 {
     
     switch (bldc.step)
     {
     case 0: //AB
-        GAL_LOW;
-        GBL_LOW;
-        GCL_LOW;
-
+        // GAL_LOW;
+        // GBL_LOW;
+        // GCL_LOW;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, 0, 0, 0);
         GAB_LOW;
         GCB_LOW;
         bldc_delay();
 //        ADC12_Compare_statue(NBRCMP0_TypeDef, NBRCMPX_L_TypeDef);
 //        ADC12_CompareFunction_set(CH_A , CH_A , center , center ) ;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, DUTY, 0, 0, 0); // PRDR=2400,CMPA=1200,CMPB=DUTY,CMPC=2400,CMPD=0
 
-        GAL_HIGH;
+        //GAL_HIGH;
         GBB_HIGH;
         break;
     case 1: //AC
-        GAL_HIGH;
-        GBL_LOW;
-        GCL_LOW;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, DUTY, 0, 0, 0);
+        //GAL_HIGH;
+        // GBL_LOW;
+        // GCL_LOW;
 
         GAB_LOW;
         GBB_LOW;
@@ -179,21 +241,24 @@ void stepMoter(void)
         GCB_HIGH;
         break;
     case 2: //BC
-        GAL_LOW;
-        GBL_LOW;
-        GCL_LOW;
+        // GAL_LOW;
+        // GBL_LOW;
+        // GCL_LOW;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, 0, 0, 0);
 
         GAB_LOW;
         GBB_LOW;
 
         bldc_delay();
-        GBL_HIGH;
+        //GBL_HIGH;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, DUTY, 0, 0);
         GCB_HIGH;
         break;
     case 3: //BA
-        GBL_HIGH;
-        GAL_LOW;
-        GCL_LOW;
+        // GBL_HIGH;
+        // GAL_LOW;
+        // GCL_LOW;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, DUTY, 0, 0);
 
         GBB_LOW;
         GCB_LOW;
@@ -204,21 +269,25 @@ void stepMoter(void)
         break;
 
     case 4: //CA
-        GAL_LOW;
-        GBL_LOW;
-        GCL_LOW;
+        // GAL_LOW;
+        // GBL_LOW;
+        // GCL_LOW;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, 0, 0, 0);
 
         GBB_LOW;
         GCB_LOW;
         bldc_delay();
 
-        GCL_HIGH;
+        //GCL_HIGH;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, 0, DUTY, 0);
         GAB_HIGH;
         break;
     case 5: //CB
-        GCL_HIGH;
-        GAL_LOW;
-        GBL_LOW;
+        // GCL_HIGH;
+        // GAL_LOW;
+        // GBL_LOW;
+        EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800, 0, 0, DUTY, 0);
+
         GAB_LOW;
         GCB_LOW;
         bldc_delay();
@@ -232,84 +301,4 @@ void stepMoter(void)
     }
 }
 
-void stepMoter1(void)
-{
-    
-    switch (bldc.step)
-    {
-    case 0: // AB
-        GAL_LOW;
-        GBL_LOW;
-        GCL_LOW;
 
-        GAB_LOW;
-        GCB_LOW;
-        bldc_delay();
-        //        ADC12_Compare_statue(NBRCMP0_TypeDef, NBRCMPX_L_TypeDef);
-        //        ADC12_CompareFunction_set(CH_A , CH_A , center , center ) ;
-
-        GAL_HIGH;
-        GBB_HIGH;
-        break;
-    case 1: // AC
-        GAL_HIGH;
-        GBL_LOW;
-        GCL_LOW;
-
-        GAB_LOW;
-        GBB_LOW;
-        bldc_delay();
-
-        GCB_HIGH;
-        break;
-    case 2: // BC
-        GAL_LOW;
-        GBL_LOW;
-        GCL_LOW;
-
-        GAB_LOW;
-        GBB_LOW;
-
-        bldc_delay();
-        GBL_HIGH;
-        GCB_HIGH;
-        break;
-    case 3: // BA
-        GBL_HIGH;
-        GAL_LOW;
-        GCL_LOW;
-
-        GBB_LOW;
-        GCB_LOW;
-        bldc_delay();
-
-        GAB_HIGH;
-        break;
-
-    case 4: // CA
-        GAL_LOW;
-        GBL_LOW;
-        GCL_LOW;
-
-        GBB_LOW;
-        GCB_LOW;
-        bldc_delay();
-
-        GCL_HIGH;
-        GAB_HIGH;
-        break;
-    case 5: // CB
-        GCL_HIGH;
-        GAL_LOW;
-        GBL_LOW;
-        GAB_LOW;
-        GCB_LOW;
-        bldc_delay();
-
-        GBB_HIGH;
-        break;
-
-    default:
-        break;
-    }
-}

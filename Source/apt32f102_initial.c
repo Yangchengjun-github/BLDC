@@ -122,12 +122,12 @@ void EPT0_CONFIG(void)
 {
 	EPT_Software_Prg();								//EPT software reset
 //------------  EPT GPIO Setting  --------------------------------/
-	EPT_IO_SET(EPT_IO_CHAX,IO_NUM_PA10);			//AX channel selection
-	EPT_IO_SET(EPT_IO_CHAY,IO_NUM_PB03);			//AY channel selection
-	EPT_IO_SET(EPT_IO_CHBX,IO_NUM_PB02);			//BX channel selection
-	EPT_IO_SET(EPT_IO_CHBY,IO_NUM_PB04);			//BY channel selection
+	EPT_IO_SET(EPT_IO_CHAX, IO_NUM_PA15);			// AX channel selection中转站
+	//EPT_IO_SET(EPT_IO_CHAY,IO_NUM_PB03);			//AY channel selection
+	EPT_IO_SET(EPT_IO_CHBX,IO_NUM_PA14);			//BX channel selection
+	//EPT_IO_SET(EPT_IO_CHBY,IO_NUM_PB04);			//BY channel selection
 	EPT_IO_SET(EPT_IO_CHCX,IO_NUM_PB05);			//CX channel selection
-	EPT_IO_SET(EPT_IO_CHCY,IO_NUM_PA04);			//CY channel selection
+	//EPT_IO_SET(EPT_IO_CHCY,IO_NUM_PA04);			//CY channel selection
 	//EPT_IO_SET(EPT_IO_CHD,IO_NUM_PA08);			//D channel selection
 //------------  EPT Control  --------------------------------/
 	EPT_PWM_Config(EPT_Selecte_PCLK,EPT_CNTMD_increase,EPT_OPM_Continue,0);//PCLK as clock，increasing mode,continuous mode,TCLK=PCLK/(0+1) 
@@ -139,9 +139,9 @@ void EPT0_CONFIG(void)
 							EPT_PWM_CBU_Event_Nochange,EPT_PWM_CBD_Event_Nochange,EPT_PWM_T1U_Event_Nochange,EPT_PWM_T1D_Event_Nochange,EPT_PWM_T2U_Event_Nochange,EPT_PWM_T2D_Event_Nochange);						
 	EPT_PWMX_Output_Control(EPT_PWMC,EPT_CA_Selecte_CMPC,EPT_CB_Selecte_CMPC,EPT_PWM_ZRO_Event_OutHigh,EPT_PWM_PRD_Event_Nochange,EPT_PWM_CAU_Event_OutLow,EPT_PWM_CAD_Event_OutLow,
 							EPT_PWM_CBU_Event_Nochange,EPT_PWM_CBD_Event_Nochange,EPT_PWM_T1U_Event_Nochange,EPT_PWM_T1D_Event_Nochange,EPT_PWM_T2U_Event_Nochange,EPT_PWM_T2D_Event_Nochange);	
-	EPT_PWMX_Output_Control(EPT_PWMD,EPT_CA_Selecte_CMPD,EPT_CB_Selecte_CMPD,EPT_PWM_ZRO_Event_OutHigh,EPT_PWM_PRD_Event_Nochange,EPT_PWM_CAU_Event_OutLow,EPT_PWM_CAD_Event_OutLow,
-							EPT_PWM_CBU_Event_Nochange,EPT_PWM_CBD_Event_Nochange,EPT_PWM_T1U_Event_Nochange,EPT_PWM_T1D_Event_Nochange,EPT_PWM_T2U_Event_Nochange,EPT_PWM_T2D_Event_Nochange);		
-	EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800,2400,1200,600,0);//PRDR=2400,CMPA=1200,CMPB=600,CMPC=2400,CMPD=0	
+	//EPT_PWMX_Output_Control(EPT_PWMD,EPT_CA_Selecte_CMPD,EPT_CB_Selecte_CMPD,EPT_PWM_ZRO_Event_OutHigh,EPT_PWM_PRD_Event_Nochange,EPT_PWM_CAU_Event_OutLow,EPT_PWM_CAD_Event_OutLow,
+	//						EPT_PWM_CBU_Event_Nochange,EPT_PWM_CBD_Event_Nochange,EPT_PWM_T1U_Event_Nochange,EPT_PWM_T1D_Event_Nochange,EPT_PWM_T2U_Event_Nochange,EPT_PWM_T2D_Event_Nochange);		
+	EPT_PRDR_CMPA_CMPB_CMPC_CMPD_Config(4800,0,0,0,0);//PRDR=2400,CMPA=1200,CMPB=600,CMPC=2400,CMPD=0	
 	EPT_DB_CLK_Config(0,24,24);//Fdbclk=Fhclk/(0+1)，DTR=24clk，DTF=24clk
 	EPT_DBCR_Config(EPT_CHA_Selecte,EPT_CHAINSEL_PWMA_RISE_FALL,EPT_CHA_OUTSEL_EnRise_EnFall,EPT_PB_OUT_Reverse,EPT_PAtoCHX_PBtoCHY);//PWMA Complementary,CHX rising edge,CHY falling edge		
 	EPT_DBCR_Config(EPT_CHB_Selecte,EPT_CHBINSEL_PWMB_RISE_FALL,EPT_CHB_OUTSEL_EnRise_EnFall,EPT_PB_OUT_Reverse,EPT_PAtoCHX_PBtoCHY);//PWMB Complementary,CHX rising edge,CHY falling edge		
@@ -210,7 +210,7 @@ void BT_CONFIG(void)
 	BT_ControlSet_Configure(BT0,BT_START_HIGH,BT_IDLE_LOW,BT_SYNC_DIS,BT_SYNCMD_DIS,BT_OSTMDX_ONCE,BT_AREARM_DIS,BT_CNTRLD_EN);
 	//BT_ControlSet_Configure(BT0,BT_START_HIGH,BT_IDLE_LOW,BT_SYNC_EN,BT_SYNCMD_DIS,BT_OSTMDX_ONCE,BT_AREARM_DIS,BT_CNTRLD_EN);
 	//BT_Trigger_Configure(BT0,BT_TRGSRC_PEND,BT_TRGOE_EN);
-	BT_Period_CMP_Write(BT0,500,500);
+	BT_Period_CMP_Write(BT0,50,500);
 	BT_Start(BT0);
 	BT_ConfigInterrupt_CMD(BT0,ENABLE,BT_PEND);
 	BT0_INT_ENABLE();
@@ -532,7 +532,7 @@ void APT32F102_init(void)
 //Other IP config
 //------------------------------------------------------------/
 	//GPIO_CONFIG();                                                //GPIO initial     
-	//EPT0_CONFIG();                                                //EPT0 initial 
+	EPT0_CONFIG();                                                //EPT0 initial 
 	//GPT0_CONFIG();												//GPT0 initial	
 	BT_CONFIG();													//BT initial
 	//COUNTA_CONFIG();                                              //CountA initial	

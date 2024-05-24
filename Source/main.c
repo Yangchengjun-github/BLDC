@@ -73,13 +73,27 @@ int main(void)
       if(bldc.task_run == 1)
       {
         bldc.task_run = 0;
+
+        if(bldc.timer_stuff)
+        {
+          bldc.timer_stuff--;
+        }
+        else
+        {
+          bldc.timer_stuff = 1000;
+          bldc.status = open;
+        }
+
+
         if(bldc.status == open)
         {
+
           timer++;
-          if (timer >2000)
+          if (timer >1000)
           {
             timer = 0;
-
+            bldc.delay = _NO;
+             //bldc.xiao = _OK;
             bldc.status = close;
           }
           blcdStart();
@@ -89,6 +103,11 @@ int main(void)
 
         }
         
+      }
+      if(bldc.motor_run)
+      {
+        bldc.motor_run = 0;
+        adc_get();
       }
      
      

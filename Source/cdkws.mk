@@ -6,7 +6,7 @@ Project_Title:
 	@echo "----------Building project:[ apt32f102 - BuildSet ]----------"
 
 Project_Build:
-	@make -r -f apt32f102.mk -j 12 -C  ./ 
+	@make -r -f apt32f102.mk -j 16 -C  ./ 
 
 
 clean:
