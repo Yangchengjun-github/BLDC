@@ -57,8 +57,14 @@ extern void APT32F102_init(void);
 /**************************************************/
 int main(void) 
 {
-  static U16_T timer = 0 ;
-	delay_nms(2000);							//power on delay if needed
+  static U16_T timer_open = 0 ;
+  static U16_T timer_align = 0;
+  static U16_T timer_close = 0;
+
+  static U8_T control_start;
+
+
+	delay_nms(1000);							//power on delay if needed
 	APT32F102_init();							//102 initial
 
   
@@ -80,28 +86,43 @@ int main(void)
         }
         else
         {
-          bldc.timer_stuff = 1000;
-          bldc.status = open;
+          bldc.timer_stuff = 200;
+          bldc.status = ALIGN;
+          control_start = 1;
         }
 
-
-        if(bldc.status == open)
+        switch(bldc.status)
         {
-
-          timer++;
-          if (timer >1000)
+        case ALIGN:
+          timer_align++;
+          bldc.step = 0;
+          stepMoter();
+          if(timer_align > 3)
           {
-            timer = 0;
-            bldc.delay = _NO;
-             //bldc.xiao = _OK;
-            bldc.status = close;
-          }
-          blcdStart();
-        }
-        else
-        {
+            timer_align = 0;
+            bldc.status = OPEN;
 
+          }
+          break;
+
+        case OPEN:
+          blcdStart(&control_start);
+          timer_close++;
+
+          if (timer_close > 100)
+          {
+            timer_close = 0;
+            bldc.xiao = _OK;
+            bldc.status = CLOSE;
+          }
+
+          break;
+        case CLOSE:
+
+          break;
         }
+
+        
         
       }
       if(bldc.motor_run)

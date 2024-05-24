@@ -16,18 +16,21 @@ typedef struct
     U16_T timer_phase_buff[8];
     U16_T timer_phase;
     U16_T timer_delay;
+    U8_T timer_delay_start;
+    U8_T  delay_ok;
     enum
     {
-        open,
-        close,
-    }status;
+        ALIGN,  //对齐
+        OPEN,  //开环
+        CLOSE,  //闭环
+    } status;
     enum
     {
         _NO,
         _ING,
         _OK,
 
-    }xiao,delay;
+    }xiao;
 }xbldc_t;
 
 #define GAL_PORT GPIOA0
@@ -71,7 +74,7 @@ typedef struct
 #define CH_B ADC12_ADCIN2
 #define CH_C ADC12_ADCIN3
 
-void blcdStart(void);
+void blcdStart(U8_T*);
 void bldcInit(void);
 void stepMoter(void);
 void ADC_CONFIG(void);
