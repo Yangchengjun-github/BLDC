@@ -15,6 +15,7 @@ typedef struct
     U16_T timer_stuff;
     U16_T timer_phase_buff[8];
     U16_T timer_phase;
+    U16_T timer_phase1;
     U16_T timer_delay;
     U8_T timer_delay_start;
     U8_T  delay_ok;
@@ -82,6 +83,8 @@ void ADC_CONFIG(void);
 void adc_get(void);
 
 extern xbldc_t bldc;
+
+extern U16_T adc_value[3];
 
 #endif
 

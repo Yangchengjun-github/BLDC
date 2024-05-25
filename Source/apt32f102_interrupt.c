@@ -861,7 +861,7 @@ void BT0IntHandler(void)
 	{
 		BT0->ICR = BT_PEND;
 		bldc.timer_phase++;
-		bldc.motor_run = 1;
+		adc_get();
 	} 
 	else if((BT0->MISR&BT_CMP)==BT_CMP)				//BT0 CMP Match interrupt 
 	{

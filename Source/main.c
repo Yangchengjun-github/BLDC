@@ -63,6 +63,8 @@ int main(void)
 
   static U8_T control_start;
 
+  static U16_T timer_debug = 0;
+
 
 	delay_nms(1000);							//power on delay if needed
 	APT32F102_init();							//102 initial
@@ -78,6 +80,13 @@ int main(void)
      SYSCON_IWDCNT_Reload();
       if(bldc.task_run == 1)
       {
+        // if(++timer_debug > 500)
+        // {
+        //   timer_debug =0;
+        //   printf("bldc.statuc%d,stuff%d\n",bldc.status,bldc.timer_stuff);
+        // }
+       // printf("%d,%d,%d\n",adc_value[0],adc_value[1],adc_value[2]);//打印adc值
+        printf("%d\n",bldc.timer_phase1);
         bldc.task_run = 0;
 
         if(bldc.timer_stuff)
@@ -128,7 +137,7 @@ int main(void)
       if(bldc.motor_run)
       {
         bldc.motor_run = 0;
-        adc_get();
+        
       }
      
      

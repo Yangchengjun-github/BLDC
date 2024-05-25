@@ -44,11 +44,11 @@ void adc_get(void)
     static U8_T i = 0, j = 0;
 
 
-    ADC12_SEQEND_wait(0);
+  //  ADC12_SEQEND_wait(0);
     adc_value[0] = ADC0->DR[0];
-    ADC12_SEQEND_wait(1);
+  // ADC12_SEQEND_wait(1);
     adc_value[1] = ADC0->DR[1];
-    ADC12_SEQEND_wait(2);
+    //ADC12_SEQEND_wait(2);
     adc_value[2] = ADC0->DR[2];
 
     //printf("%d,%d,%d \n", adc_value[0], adc_value[1], adc_value[2]);
@@ -77,7 +77,7 @@ void adc_get(void)
 
 
     
-
+#if 0
     switch (bldc.step)
     {
     case 0: // AB
@@ -119,7 +119,50 @@ void adc_get(void)
         }
         break;
     }
+#else
+        switch (bldc.step)
+        {
+        case 0:                                // AB
+            if (adc_value[2] < adc_value[0]>>1)   // && last_adc_value[2] > bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 1:                                // AC
+            if (adc_value[1] > adc_value[0]>>1)   // && last_adc_value[1] < bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 2:                                // BC
+            if (adc_value[0] < adc_value[1]>>1)   // && last_adc_value[0] > bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
 
+            break;
+        case 3:                                // BA
+            if (adc_value[2] > adc_value[1]>>1)   // && last_adc_value[2] < bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        case 4:                                // CA
+            if (adc_value[1] < adc_value[2]>>1)   // && last_adc_value[1] > bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+
+            break;
+        case 5:                                // CB
+            if (adc_value[0] > adc_value[2]>>1)   // && last_adc_value[0] < bldc.zero_base)
+            {
+                bldc.zero = 1;
+            }
+            break;
+        }
+
+#endif
 
 
     if (bldc.zero == 1  && bldc.xiao == _OK)//过零 且消磁
@@ -136,11 +179,10 @@ void adc_get(void)
         {
             bldc.timer_phase += bldc.timer_phase_buff[i];
         }
-        bldc.timer_phase = bldc.timer_phase >> 4;
+        bldc.timer_phase = (bldc.timer_phase >> 4) -2;
 
         
-        
-
+        bldc.timer_phase1 = bldc.timer_phase;
         bldc.timer_delay = bldc.timer_phase;  //装载30°延时
         bldc.delay_ok = 0;
         bldc.timer_delay_start = 1;
@@ -173,7 +215,7 @@ void adc_get(void)
                 bldc.timer_stuff = 200;
             }
             bldc.timer_delay_start = 1;
-            bldc.timer_delay = 2;
+            bldc.timer_delay = 1;
         }
         else if (bldc.xiao == _ING)
         {
@@ -193,9 +235,9 @@ void adc_get(void)
 
 
    // printf("%d,%d,%d,%d,%d,%d,%d\n", adc_value[0], adc_value[1], adc_value[2], bldc.wait, bldc.step, bldc.timer_stuff, bldc.timer_phase);
-    last_adc_value[0] = adc_value[0];
-    last_adc_value[1] = adc_value[1];
-    last_adc_value[2] = adc_value[2];
+    // last_adc_value[0] = adc_value[0];
+    // last_adc_value[1] = adc_value[1];
+    // last_adc_value[2] = adc_value[2];
 }
 
 void bldcInit(void)
@@ -237,7 +279,7 @@ void blcdStart(U8_T *control)
      
 }
 
-#define DUTY ( 4800 * 1.0)
+#define DUTY ( 4800 )
 void stepMoter(void)
 {
     
